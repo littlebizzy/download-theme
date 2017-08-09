@@ -6,7 +6,7 @@
  * @package Download Theme
  * @subpackage Download Theme Core
  */
-final class DWNPLG_Core_Themes {
+final class DWNTHM_Core_Themes {
 
 
 
@@ -48,7 +48,7 @@ final class DWNPLG_Core_Themes {
 	private function __construct() {
 
 		// Add footer hook
-		add_action('admin_footer', array(&$this, 'admin_footer'));
+		add_action('admin_print_footer_scripts', array(&$this, 'admin_footer'));
 	}
 
 
@@ -62,6 +62,17 @@ final class DWNPLG_Core_Themes {
 	 * Link actions hook handler
 	 */
 	public function admin_footer() {
+
+		// Prepare links
+
+		
+
+		// Display ?>
+		<script type="text/javascript">
+			console.log('here');
+			console.log(_wpThemeSettings);
+		</script><?php
+
 
 		/* // Download URL
 		$download_url = add_query_arg(array(
