@@ -48,7 +48,7 @@ final class DWNTHM_Core_Themes {
 	private function __construct() {
 
 		// Add footer hook
-		add_action('admin_print_footer_scripts', array(&$this, 'admin_footer'));
+		add_action('admin_footer', array(&$this, 'admin_footer'), 0);
 	}
 
 
@@ -64,27 +64,50 @@ final class DWNTHM_Core_Themes {
 	public function admin_footer() {
 
 		// Prepare links
+		$themes = array_keys(wp_get_themes());
+		if (empty($themes) || !is_array($themes))
+			return;
 
-		
+		// Initialize
+		$links = array();
+
+		// Array of links
+		foreach ($themes as $theme_dir) {
+			$links[$theme_dir] = add_query_arg(array(
+				'dwnthm_theme' => urlencode($theme_dir),
+				'dwnthm_nonce' => wp_create_nonce(DWNTHM_FILE.$theme_dir),
+			), admin_url());
+		}
 
 		// Display ?>
 		<script type="text/javascript">
-			console.log('here');
-			console.log(_wpThemeSettings);
+
+			jQuery(document).ready(function($) {
+
+				var dwnthm_links = <?php echo @json_encode($links); ?>;
+				var n, html = $('#tmpl-theme-single').html();
+
+				var mark = "<# if ( ! data.active && data.actions['delete'] ) { #>";
+				if (-1 !== (n = html.indexOf(mark))) {
+
+					html = html.substr(0, n) + '<a href="#" class="dwnthm-download" style="position: absolute; right: 10px; bottom: 10px; text-decoration: none; font-weight: bold;">Download</a>' + "\n" + html.substr(n);
+					html = html.replace('class="button delete-theme"', 'class="button delete-theme" style="right: 85px;"');
+					$('#tmpl-theme-single').html(html);
+
+					$(document).on('click', '.dwnthm-download', function() {
+						var html = $(this).closest('.theme-actions').html();
+						html = html.split('?theme=');
+						if (html.length > 1) {
+							html = html[1].split('&amp;');
+							if (html[0] in dwnthm_links)
+								window.location.href = dwnthm_links[html[0]];
+						}
+						return false;
+					});
+				}
+			});
+
 		</script><?php
-
-
-		/* // Download URL
-		$download_url = add_query_arg(array(
-			'dwnplg_plugin' => urlencode($plugin_file),
-			'dwnplg_nonce'  => wp_create_nonce(DWNPLG_FILE.$plugin_file),
-		), admin_url());
-
-		// Add the download link
-		$plugin_meta[] = '<a href="'.esc_url($download_url).'">Download</a>';
-
-		// Done
-		return $plugin_meta; */
 	}
 
 
