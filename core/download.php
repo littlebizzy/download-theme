@@ -63,33 +63,35 @@ final class DWNTHM_Core_Download {
 	 */
 	public function download() {
 
-		/* // Check current user capabilities
-		if (!is_user_logged_in() || !current_user_can('activate_plugins'))
+		// Check current user capabilities
+		if (!is_user_logged_in() || !current_user_can('edit_theme_options'))
 			return;
 
 		// Check nonce argument
-		$plugin_file = $_GET['dwnplg_plugin'];
-		if (!wp_verify_nonce($_GET['dwnplg_nonce'], DWNPLG_FILE.$plugin_file))
+		$theme_dir = $_GET['dwnthm_theme'];
+		if (!wp_verify_nonce($_GET['dwnthm_nonce'], DWNTHM_FILE.$theme_dir))
 			return;
 
 		// Dependencies
 		if (!class_exists('PclZip'))
 			include ABSPATH.'wp-admin/includes/class-pclzip.php';
 
+		// Themes directory
+		$themes_root = get_theme_root();
+
 		// Plugin directory path
-		$plugin_file = explode('/', trim($plugin_file, '/'));
-		$path_copy = trailingslashit(WP_PLUGIN_DIR).$plugin_file[0];
+		$path_copy = trailingslashit($themes_root).$theme_dir;
 
 		// Prepare destination
 		$upload_dir = wp_upload_dir();
-		$path_temp  = trailingslashit($upload_dir['basedir']).md5(DWNPLG_FILE.microtime().rand(0, 999999));
+		$path_temp  = trailingslashit($upload_dir['basedir']).md5(DWNTHM_FILE.microtime().rand(0, 999999));
 
 		// Create the ZIP file
 		$archive = new PclZip($path_temp);
-		$archive->add($path_copy, PCLZIP_OPT_REMOVE_PATH, WP_PLUGIN_DIR);
+		$archive->add($path_copy, PCLZIP_OPT_REMOVE_PATH, $themes_root);
 
 		// User download filename
-		$download_file = sanitize_file_name($plugin_file[0]).'.zip';
+		$download_file = sanitize_file_name($theme_dir).'.zip';
 
 		// Set headers for the zip archive
 		@header('Content-type: application/zip');
@@ -103,7 +105,7 @@ final class DWNTHM_Core_Download {
 		@unlink($path_temp);
 
 		// End
-		die; */
+		die;
 	}
 
 

@@ -24,7 +24,7 @@ if (!is_admin() || (defined('DOING_AJAX') && DOING_AJAX))
 	return;
 
 // Check download request
-if (!empty($_GET['dwnthm_plugin']) && !empty($_GET['dwnthm_nonce'])) {
+if (!empty($_GET['dwnthm_theme']) && !empty($_GET['dwnthm_nonce'])) {
 	require_once(DWNTHM_PATH.'/core/download.php');
 	DWNTHM_Core_Download::instance();
 
